@@ -1,22 +1,17 @@
 package com.example.jwttest.domain.auth.controller;
 
-import com.example.jwttest.domain.auth.dto.LoginRequestDto;
-import com.example.jwttest.domain.auth.dto.LoginResponseDto;
-import com.example.jwttest.domain.auth.dto.SignUpRequestDto;
-import com.example.jwttest.domain.auth.dto.SignUpResponseDto;
+import com.example.jwttest.domain.auth.dto.*;
 import com.example.jwttest.domain.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -40,5 +35,11 @@ public class AuthController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/admin/users/{userId}/roles")
+    public ResponseEntity<UpdateUserToAdminRequestDto> updateUserToAdmin(@PathVariable Long userId) {
+        UpdateUserToAdminRequestDto response = authService.updateUserToAdmin(userId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }

@@ -47,6 +47,19 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String createExpiredAccessToken(Long userId, String username, UserRole userRole) {
+        Date now = new Date();
+
+        return Jwts.builder()
+                .setSubject(String.valueOf(userId)) // 주제설정, string 으로만 주입 가능
+                .claim("username", username)
+                .claim("userRole", userRole)
+                .setIssuedAt(now) // 발급날짜
+                .setExpiration(new Date(now.getTime() - 1000)) // 만료날짜
+                .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                .compact();
+    }
+
     public String createRefreshToken(Long userId) { // refresh 토큰 생성 메서드
         Date now = new Date();
         Date expiration = new Date(now.getTime() + REFRESH_TOKEN_EXPIRATION);
@@ -87,6 +100,9 @@ public class JwtUtil {
             throw new JwtCustomException(ErrorStatus.INVALID_TOKEN);
         }
         String token = bearerJwt.substring(7);
+        if(token.trim().isEmpty()) {
+            throw new JwtCustomException(ErrorStatus.INVALID_TOKEN);
+        }
         return token;
     }
 

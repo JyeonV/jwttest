@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,14 +21,19 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+
     private final JwtUtil jwtUtil;
 
     private final CustomUserDetailsService customUserDetailsService;
 
     private static final String[] WHITE_LIST = {
-            "/login",
-            "/signup",
-            "/signup/admin"
+            "/api/login",
+            "/api/signup",
+            "/api/signup/admin",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/v3/api-docs/**"
     };
 
     protected void doFilterInternal(HttpServletRequest request,
@@ -69,6 +75,11 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private boolean isWhiteList(String requestURI) {
-        return PatternMatchUtils.simpleMatch(WHITE_LIST, requestURI);
+        for (String pattern : WHITE_LIST) {
+            if (antPathMatcher.match(pattern, requestURI)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

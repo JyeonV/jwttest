@@ -33,6 +33,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// H2 DB 의존성
+	runtimeOnly 'com.h2database:h2'
+
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
@@ -43,6 +46,9 @@ dependencies {
 
 	// security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Springdoc -> Spring Boot 3.5.0 버전은 2.8.9 이상의 버전과만 호환됨.
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
 }
 
 tasks.named('test') {
